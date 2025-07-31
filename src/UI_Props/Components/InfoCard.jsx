@@ -1,5 +1,5 @@
 import React from "react";
-import "../App.css";
+import "./Components.css";
 
 function InfoCard({ children }) {
   return (

@@ -1,5 +1,5 @@
 import React from "react";
-import "../App.css";
+import "./Components.css";
 
 function IconButton({ icon, tooltip, section, activeSection, onClick }) {
   const isActive = section === activeSection;

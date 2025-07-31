@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import InfoCard from "./UI_Props/InfoCard";
-import IconButton from "./UI_Props/IconButton";
+import InfoCard from "./UI_Props/Components/InfoCard";
+import IconButton from "./UI_Props/Components/IconButton";
 import LinkSessionReport from "./UI_Props/LinkSessionReport";
 import ChatPanel from "./UI_Props/ChatPanel";
 import AgentConfiguration from "./UI_Props/AgentConfiguation";
+import LinkSessionSelect from "./UI_Props/LinkSessionSelect";
 
 function App() {
   const [msg, setMsg] = useState("Hello World");
@@ -51,6 +52,24 @@ function App() {
 
   return (
     <div className="app-container">
+
+      {/* the session selection list */}
+      {/* <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "90vw",
+          height: "80vh",
+        }}
+      >
+        <InfoCard>
+          <LinkSessionSelect />
+
+        </InfoCard>
+
+      </div> */}
+
       <div className="main-layout">
         {showLeftPanel && (
           <div className="left-panel">

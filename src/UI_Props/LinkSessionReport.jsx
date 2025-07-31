@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 import "../App.css";
 import StrategyCard from "./StrategyEdit";
 import StrategyModal from "./StrategyEdit";
+import "../api/gateway.js"
+import { getSessionReport } from "../api/gateway.js";
 
 function ClientCard({ client }) {
   const [collapsed, setCollapsed] = useState(true);
@@ -118,13 +120,25 @@ function LinkSessionReport() {
   const [showStrategyModal, setShowStrategyModal] = useState(false); // 👈 for controlling strategy modal
 
   useEffect(() => {
-    fetch(`http://${__BACKEND_HOST__}/session_report/0`)
-      .then(async (resp) => {
-        const text = await resp.text();
-        console.log(text);
-        setReport(JSON.parse(text));
-      })
-      .catch(console.error);
+    // fetch(`http://${__BACKEND_HOST__}/session_report/0`)
+    //   .then(async (resp) => {
+    //     const text = await resp.text();
+    //     console.log(text);
+    //     setReport(JSON.parse(text));
+    //   })
+    //   .catch(console.error);
+
+    const fetchReport = async () => {
+      try {
+        const response = await getSessionReport(0);
+        console.log("Fetched report:", response);
+        setReport(response);
+      } catch (error) {
+        console.error("Failed to fetch session report", error);
+      }
+    };
+
+    fetchReport();
   }, []);
 
   if (!report || !report.clients) return <div>Loading...</div>;
