@@ -11,6 +11,7 @@ function App() {
   const [msg, setMsg] = useState("Hello World");
   const [activeSection, setActiveSection] = useState("link-session");
   const [showLeftPanel, setShowLeftPanel] = useState(true);
+  const [selectedSessionId, setSelectedSessionId] = useState(null);
 
   const buttonList = [
     {
@@ -20,7 +21,7 @@ function App() {
       onClick: () => {
         setActiveSection("link-session");
         setShowLeftPanel((prev) => !prev);
-      }
+      },
     },
     {
       icon: "david.png",
@@ -28,7 +29,7 @@ function App() {
       section: "chat",
       onClick: () => {
         setActiveSection("chat");
-      }
+      },
     },
     {
       icon: "masks.png",
@@ -36,7 +37,7 @@ function App() {
       section: "agent",
       onClick: () => {
         setActiveSection("agent");
-      }
+      },
     },
     {
       icon: "cloud.png",
@@ -44,17 +45,23 @@ function App() {
       section: "agent",
       onClick: () => {
         setActiveSection("agent");
-      }
-    }
+      },
+    },
   ];
+
+  // Handler to select session from LinkSessionSelect
+  const handleSessionSelect = (sessionId) => {
+    setSelectedSessionId(sessionId);
+    setShowLeftPanel(true);
+    setActiveSection("session");
+  };
 
   useEffect(() => {}, [activeSection]);
 
   return (
-    <div className="app-container">
-
-      {/* the session selection list */}
-      {/* <div
+  <div className="app-container">
+    {!selectedSessionId ? (
+      <div
         style={{
           display: "flex",
           justifyContent: "center",
@@ -64,16 +71,14 @@ function App() {
         }}
       >
         <InfoCard>
-          <LinkSessionSelect />
-
+          <LinkSessionSelect onSessionSelect={handleSessionSelect} />
         </InfoCard>
-
-      </div> */}
-
+      </div>
+    ) : (
       <div className="main-layout">
-        {showLeftPanel && (
+        {showLeftPanel && activeSection === "session" && (
           <div className="left-panel">
-            <LinkSessionReport />
+            <LinkSessionReport sessionId={selectedSessionId} />
           </div>
         )}
 
@@ -86,46 +91,49 @@ function App() {
               <ChatPanel socketUrl={`ws://${__BACKEND_HOST__}/link_session`} />
             ) : activeSection === "agent" ? (
               <AgentConfiguration />
+            ) : activeSection === "session" ? (
+              <div>Session <b>{selectedSessionId}</b> loaded</div>
             ) : (
               <div>{msg}</div>
             )}
           </InfoCard>
         </div>
       </div>
+    )}
 
-      <div className="bottom-bar">
-        <div className="left-group">
-          {buttonList
-            .filter((btn) => btn.section === "link-session")
-            .map(({ icon, tooltip, section, onClick }) => (
-              <IconButton
-                key={section}
-                icon={icon}
-                tooltip={tooltip}
-                section={section}
-                activeSection={activeSection}
-                onClick={onClick}
-              />
-            ))}
-        </div>
+    <div className="bottom-bar">
+      <div className="left-group">
+        {buttonList
+          .filter((btn) => btn.section === "link-session")
+          .map(({ icon, tooltip, section, onClick }) => (
+            <IconButton
+              key={section}
+              icon={icon}
+              tooltip={tooltip}
+              section={section}
+              activeSection={activeSection}
+              onClick={onClick}
+            />
+          ))}
+      </div>
 
-        <div className="center-group">
-          {buttonList
-            .filter((btn) => btn.section !== "link-session")
-            .map(({ icon, tooltip, section, onClick }) => (
-              <IconButton
-                key={tooltip}
-                icon={icon}
-                tooltip={tooltip}
-                section={section}
-                activeSection={activeSection}
-                onClick={onClick}
-              />
-            ))}
-        </div>
+      <div className="center-group">
+        {buttonList
+          .filter((btn) => btn.section !== "link-session")
+          .map(({ icon, tooltip, section, onClick }) => (
+            <IconButton
+              key={tooltip}
+              icon={icon}
+              tooltip={tooltip}
+              section={section}
+              activeSection={activeSection}
+              onClick={onClick}
+            />
+          ))}
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default App;

@@ -22,23 +22,6 @@ export const getSessionReport = async (session_id) => {
 
 export const getSessionList = async () => {
   return await request.get("/session_list")
-//   return [
-//         {
-//             session_id: "0",
-//             clients: 0,
-//             strategy: "mcp_json_reporter"
-//         },
-//         {
-//             session_id: "1",
-//             clients: 2,
-//             strategy: "tool_selector"
-//         },
-//         {
-//             session_id: "2",
-//             clients: 1,
-//             strategy: "chain_planner"
-//         }
-//     ];
 
 }
 

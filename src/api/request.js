@@ -1,7 +1,7 @@
 import axios from "axios"
 
-// const BACKEND_HOST = "http://172.16.16.202:8192"
-const BACKEND_HOST = "http://localhost:8192"
+const BACKEND_HOST = "http://172.16.16.202:8192"
+// const BACKEND_HOST = "http://localhost:8192"
 
 const request = axios.create({
   baseURL: BACKEND_HOST,

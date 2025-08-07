@@ -672,3 +672,69 @@ Strategy Modal
   margin-bottom: 0.25rem;
   word-break: break-all;
 }
+
+
+
+
+
+
+
+
+
+
+/*
+========================
+session selection 
+========================
+*/
+
+.session-item-wrapper {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #373737; /* soft contrast background */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s ease-in-out, transform 0.15s ease;
+}
+
+.session-item-wrapper:hover {
+  box-shadow: 0 0px 6px rgb(255, 255, 255);
+  transform: translateY(-1px);
+}
+
+.session-info-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.session-attr {
+  background-color: #ffffff;
+  color: #111;
+  padding: 0.2rem 0.6rem;
+  margin-left: 0.25rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.session-info-label {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.session-attr {
+  background-color: #ffffff;
+  color: #111;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgb(255, 255, 255);
+  transition: box-shadow 0.2s ease-in-out;
+}
