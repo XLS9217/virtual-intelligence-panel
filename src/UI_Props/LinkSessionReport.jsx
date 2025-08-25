@@ -3,8 +3,10 @@ import ReactDOM from "react-dom";
 import "../App.css";
 import StrategyCard from "./StrategyEdit";
 import StrategyModal from "./StrategyEdit";
-import "../api/gateway.js"
+import "../api/gateway.js";
 import { getSessionReport } from "../api/gateway.js";
+import IconButton from "./Components/IconButton";
+import AgentCard from "./SessionReport/AgentCard.jsx";
 
 function ClientCard({ client }) {
   const [collapsed, setCollapsed] = useState(true);
@@ -33,78 +35,32 @@ function ClientCard({ client }) {
   );
 }
 
-function AgentInfoCard({ agent, onClose }) {
+function RawJsonModal({ data, onClose }) {
+  const cleaned = JSON.parse(
+    JSON.stringify(data, (key, value) => {
+      if (typeof value === "string") {
+        return value.replace(/\\n/g, "!!!");
+      }
+      return value;
+    })
+  );
+
   return ReactDOM.createPortal(
     <div className="agent-info-overlay" onClick={onClose}>
       <div className="agent-info-card" onClick={(e) => e.stopPropagation()}>
         <button className="agent-info-close-button" onClick={onClose}>
           ×
         </button>
-        <div className="agent-info-title">Agent: {agent.name}</div>
-        <div className="agent-info-setting">{agent.setting}</div>
-      </div>
-    </div>,
-    document.body
-  );
-}
-
-function AgentCard({ agent }) {
-  const [showDetail, setShowDetail] = useState(false);
-  if (!agent) return null;
-
-  return (
-    <>
-      <div
-        className="client-card expanded"
-        onClick={() => setShowDetail(true)}
-      >
-        <div className="client-entry">
-          <span className="entry-key">Agent:</span>
-          <span className="entry-value">{agent.name}</span>
-        </div>
-        <div className="client-entry">
-          <span className="entry-key">Setting:</span>
-          <span className="entry-value">(click to view)</span>
-        </div>
-      </div>
-      {showDetail && (
-        <AgentInfoCard agent={agent} onClose={() => setShowDetail(false)} />
-      )}
-    </>
-  );
-}
-
-function MCPServerCard({ server }) {
-  return (
-    <div className="client-card expanded">
-      <div className="client-entry">
-        <span className="entry-key">MCP:</span>
-        <span className="entry-value">{server}</span>
-      </div>
-    </div>
-  );
-}
-
-function RawJsonModal({ data, onClose }) {
-  // Deep clone and normalize newline formatting for display
-  const cleaned = JSON.parse(JSON.stringify(data, (key, value) => {
-    if (typeof value === "string") {
-      return value.replace(/\\n/g, "!!!"); // in case string has literal \n
-    }
-    return value;
-  }));
-
-  return ReactDOM.createPortal(
-    <div className="agent-info-overlay" onClick={onClose}>
-      <div className="agent-info-card" onClick={(e) => e.stopPropagation()}>
-        <button className="agent-info-close-button" onClick={onClose}>×</button>
         <div className="agent-info-title">Raw Session Report</div>
-        <pre className="agent-info-setting" style={{
-          fontSize: "0.9rem",
-          whiteSpace: "pre-wrap",
-          overflowY: "auto",
-          maxHeight: "100%"
-        }}>
+        <pre
+          className="agent-info-setting"
+          style={{
+            fontSize: "0.9rem",
+            whiteSpace: "pre-wrap",
+            overflowY: "auto",
+            maxHeight: "100%",
+          }}
+        >
           <code>{JSON.stringify(cleaned, null, 2)}</code>
         </pre>
       </div>
@@ -113,24 +69,15 @@ function RawJsonModal({ data, onClose }) {
   );
 }
 
-
-function LinkSessionReport() {
+function LinkSessionReport({ sessionId, zoomedIn, onToggleZoom }) {
   const [report, setReport] = useState(null);
   const [showRaw, setShowRaw] = useState(false);
-  const [showStrategyModal, setShowStrategyModal] = useState(false); // 👈 for controlling strategy modal
+  const [showStrategyModal, setShowStrategyModal] = useState(false);
 
   useEffect(() => {
-    // fetch(`http://${__BACKEND_HOST__}/session_report/0`)
-    //   .then(async (resp) => {
-    //     const text = await resp.text();
-    //     console.log(text);
-    //     setReport(JSON.parse(text));
-    //   })
-    //   .catch(console.error);
-
     const fetchReport = async () => {
       try {
-        const response = await getSessionReport(0);
+        const response = await getSessionReport(sessionId || 0);
         console.log("Fetched report:", response);
         setReport(response);
       } catch (error) {
@@ -139,12 +86,20 @@ function LinkSessionReport() {
     };
 
     fetchReport();
-  }, []);
+  }, [sessionId]);
 
   if (!report || !report.clients) return <div>Loading...</div>;
 
   return (
-    <div className="section-report">
+    <div className="section-report" style={{ position: "relative" }}>
+      <div className="zoom-button-container">
+        <IconButton
+          icon={zoomedIn ? "zoom-out.png" : "zoom-in.png"}
+          tooltip={zoomedIn ? "Zoom Out" : "Zoom In"}
+          onClick={onToggleZoom}
+        />
+      </div>
+
       <div className="section-title">Session ID: {report.session_id}</div>
 
       <button
@@ -156,21 +111,24 @@ function LinkSessionReport() {
       </button>
 
       {showRaw && (
-        <RawJsonModal
-          data={report}
-          onClose={() => {
-            console.log("close json modal");
-            setShowRaw(false);
-          }}
-        />
+        <RawJsonModal data={report} onClose={() => setShowRaw(false)} />
       )}
 
       <button
         className="agent-add-button"
         onClick={() => setShowStrategyModal(true)}
-        style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem",
+          marginBottom: "1rem",
+        }}
       >
-        <img src={"settings.png"} alt="settings" style={{ width: "1.5rem", height: "1.5rem" }} />
+        <img
+          src={"settings.png"}
+          alt="settings"
+          style={{ width: "1.5rem", height: "1.5rem" }}
+        />
         <span className="entry-key">Strategy:</span>
         <span className="entry-value">{report.strategy?.strategy}</span>
       </button>
@@ -182,8 +140,7 @@ function LinkSessionReport() {
         />
       )}
 
-      <MCPServerCard server={report.avaliable_mcp_server} />
-      <AgentCard agent={report.agent} />
+      <AgentCard agent={report.host} />
 
       <div className="client-list">
         {report.clients.map((client, index) => (
@@ -195,4 +152,3 @@ function LinkSessionReport() {
 }
 
 export default LinkSessionReport;
-

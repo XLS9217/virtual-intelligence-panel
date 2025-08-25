@@ -31,7 +31,7 @@ function tryExtractContent(jsonStr) {
   return jsonStr;
 }
 
-export default function ChatPanel({ socketUrl }) {
+export default function ChatPanel({ socketUrl, sessionId  }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isThinking, setIsThinking] = useState(false);
@@ -45,9 +45,9 @@ export default function ChatPanel({ socketUrl }) {
 
     socketRef.current.onopen = () => {
       const init_msg = {
-        role: "displayer",
+        role: "monitor",
         platform: "cli",
-        session_id: "0",
+        session_id: sessionId,
       };
       socketRef.current.send(JSON.stringify(init_msg));
     };

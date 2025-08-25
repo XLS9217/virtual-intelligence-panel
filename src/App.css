@@ -279,7 +279,12 @@ Link session report
   color: #ff8888;
 }
 
-
+.zoom-button-container {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  z-index: 10;
+}
 
 
 
